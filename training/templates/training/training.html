@@ -1,0 +1,102 @@
+{% load static %}
+
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link href="{% static 'css_bootstrap/bootstrap.min.css' %}" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+          
+    <meta charset="UTF-8">
+    <title>DeepFake Training</title>
+    <style>
+        .btn:focus {
+          outline: none;
+          box-shadow: none;
+        }
+        .select:focus {
+          outline: none;
+          box-shadow: none;
+        }
+    </style>
+    <ul class="w3-center w3-theme w3-padding">
+        <button style="font-size: 24px;" type="button" class="btn-success border-1" onclick="location.href='http://127.0.0.1:8000'">
+            Home
+        </button>
+        <button style="font-size: 24px;" type="button" class="btn-success border-1" onclick="location.href='http://127.0.0.1:8000/Project/'">
+            Labeling                   
+    </button>
+        <button style="font-size: 24px;" type="button" class="btn-primary border-1" onclick="location.href='http://127.0.0.1:8000/Project/Training/'">
+            Training                   
+    </button>
+    </ul>
+</head>
+
+
+<div class="container-fluid" style="height:30"></div>
+<div class="container">
+    <div class="row align-items-start">
+        <div class="col-3 border border-dark border-1" style="height:700px">
+          <div class="row gx-5">
+                <div class="d-grid gap-2" style="height:10px"></div>
+                <div class="d-grid gap-2" style="font-size: 24px; color:blue">
+                    Project List
+                </div>
+                <div class="d-grid gap-2" style="height:10px"></div>
+                <div class="d-grid gap-2">
+                    <select multiple>
+                        {% for object in project_object %}
+                        <option value="{{object.projecName}}">{{object.projecName}}</option>
+                        {%endfor%}
+                    </select>
+                </div>
+                <div> (Press CTRL to select multiple projects for training)</div>
+                
+                <div class="d-grid gap-2" style="height:30px"></div>
+                <div style="height:400px">
+                    <select class="form-select select" aria-label="Default select example">
+                      <option value="" disabled selected>Optimization Methods</option>
+                      <option value="1">Adam</option>
+                      <option value="2">Two</option>
+                      <option value="3">Three</option>
+                    </select>
+                    <div class="d-grid gap-2" style="height:20px"></div>
+                    <div class="input-group flex-nowrap">
+                      <input type="text" class="form-control" placeholder="Learning Rate" aria-label="Username" aria-describedby="addon-wrapping">
+                    </div>
+                    <div class="d-grid gap-2" style="height:20px"></div>
+                    <div class="input-group flex-nowrap">
+                      <input type="text" class="form-control" placeholder="Model name saved as" aria-label="Username" aria-describedby="addon-wrapping">
+                    </div>
+                </div>
+                <div class="d-grid gap-2" style="height:-60px"></div>
+                <div class="d-grid gap-2" >
+                    <button type="button" class="btn btn-dark">
+                        Start Training
+                    </button>
+                    <button type="button" class="btn btn-dark">
+                        Stop 
+                    </button>
+                </div>
+        </div>
+        </div>
+        <div class="col-1"></div>
+        <div class="col-8 border border-dark border-1" style="overflow-y:scroll;height:700px">
+            <span id="span"></span>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js_bootstrap/bootstrap.bundle.min.js' %}"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+<script>
+socket = new WebSocket("ws://127.0.0.1:8000/ws");
+socket.onmessage = function (event){
+    console.log(event.data);
+    document.getElementById("span").append(event.data);
+    document.getElementById("span").appendChild(document.createElement("br"));
+}
+</script>
+</body>

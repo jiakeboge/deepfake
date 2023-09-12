@@ -1,0 +1,6 @@
+db.sqlite3
+.idea/
+media/
+Django_remarks
+export/
+*__pycache__*
