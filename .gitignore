@@ -6,3 +6,7 @@ export/
 *__pycache__*
 *.pth
 checkpoint/
+AiServer/Pyramidbox/test_custom_videos_results/
+
+
+

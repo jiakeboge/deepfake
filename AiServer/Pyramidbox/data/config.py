@@ -67,15 +67,16 @@ _C.MULTIGPU = True
 _C.NUM_WORKERS = 4
 
 # dataset config
+
 _C.HOME = './AiServer/Pyramidbox'
-_C.SAVE_FOLDER = './AiServer/Pyramidbox/weights'
+_C.SAVE_FOLDER = _C.HOME + '/weights'
 
 # face config
 _C.FACE = EasyDict()
-_C.FACE.TRAIN_FILE = './AiServer/Pyramidbox/data/face_train.txt'
-_C.FACE.VAL_FILE = './AiServer/Pyramidbox/data/face_val.txt'
-_C.FACE.FDDB_DIR = './AiServer/Pyramidbox/FDDB_evaluation'
-_C.FACE.WIDER_DIR = './AiServer/Pyramidbox/wider_face'
+_C.FACE.TRAIN_FILE = _C.HOME + '/data/face_train.txt'
+_C.FACE.VAL_FILE = _C.HOME + '/data/face_val.txt'
+_C.FACE.FDDB_DIR = _C.HOME + '/FDDB_evaluation'
+_C.FACE.WIDER_DIR = _C.HOME + '/wider_face'
 _C.FACE.AFW_DIR = '/data/faceDet/AFW'
 _C.FACE.PASCAL_DIR = '/data/faceDet/PASCAL_FACE'
 _C.FACE.OVERLAP_THRESH = 0.35

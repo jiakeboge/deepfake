@@ -20,7 +20,7 @@ train_json = {
         # "weight_decay": 5e-4,
         # "gamma": 0.1,
         # "multigpu": True,
-        "save_folder": './AiServer/Pyramidbox/weights/'
+        "save_folder": 'checkpoint/test'
     }
 
 inferenceJson = {

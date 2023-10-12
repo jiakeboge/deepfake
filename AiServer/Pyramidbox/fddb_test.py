@@ -149,7 +149,7 @@ def test_customize(callback, args):
     args.epoch = -1
     args.thresh = 0.01
     args.use_cuda = True
-    args.model_path = './AiServer/Pyramidbox/weights'
+    args.model_path = 'checkpoint/pyramidbox_-1.pth'
     args.model = os.path.join(args.model_path, f'pyramidbox_{args.epoch}.pth')
     args.save_path = os.path.join(args.output_path, f'pyramidbox_resnet152_{args.epoch}')
 
