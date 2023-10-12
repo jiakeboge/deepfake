@@ -31,9 +31,11 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'menu.apps.MenuConfig',
     'training.apps.TrainingConfig',
     'channels',
+    'websocket_app',
     'video.apps.VideoConfig',
     'project.apps.ProjectConfig',
     'django.contrib.admin',

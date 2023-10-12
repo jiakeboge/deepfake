@@ -56,10 +56,7 @@ def project_list_data(request,pk):
     form.instance.project_id = pk
     if form.is_valid():
         form.save()
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect((HOST, PORT))
-            form.instance.filename
-            s.sendall((os.path.join(os.getcwd(),'media',str(form.instance.filename)) + "*" + "V" + str(form.instance.id) ).encode())
+        form.instance.filename
 
         return render(request, 'video/video_test.html',context)
     print(form.errors)
