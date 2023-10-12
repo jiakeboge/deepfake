@@ -51,7 +51,7 @@ def train(callback, args):
     if not os.path.exists(cfg.SAVE_FOLDER):
         os.makedirs(cfg.SAVE_FOLDER)
 
-    train_dataset = WIDERDetection(cfg.FACE.TRAIN_FILE, mode='train')
+    train_dataset = WIDERDetection(cfg.FACE.TRAIN_FILE, mode='train', folder_path=args.data_path)
 
     train_loader = data.DataLoader(train_dataset, cfg.BATCH_SIZE,
                                    num_workers=0,#cfg.NUM_WORKERS,

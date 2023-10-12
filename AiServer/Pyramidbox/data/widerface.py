@@ -16,7 +16,7 @@ from ..utils.augmentations import preprocess
 class WIDERDetection(data.Dataset):
     """docstring for WIDERDetection"""
 
-    def __init__(self, list_file, mode='train'):
+    def __init__(self, list_file, mode='train', folder_path=""):
         super(WIDERDetection, self).__init__()
         self.mode = mode
         self.fnames = []
@@ -55,7 +55,8 @@ class WIDERDetection(data.Dataset):
                 box.append([x, y, x + w, y + h])
                 label.append(c)
             if len(box) > 0:
-                self.fnames.append(key)
+                f_name = key.replace("./AiServer/Pyramidbox/wider_face/", folder_path)
+                self.fnames.append(f_name)
                 self.boxes.append(box)
                 self.labels.append(label)
 
