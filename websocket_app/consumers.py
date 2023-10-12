@@ -14,7 +14,7 @@ train_json = {
         "lr": 0.001,
         "momentum": 0.9,
         "optim": "adam",
-        "data_path": "/media/hkuit164/638FF62A1FE9E82D/wider_face",
+        "data_path": "/media/hkuit164/638FF62A1FE9E82D/wider_face/",
         "save_folder": 'checkpoint/test'
     }
 
