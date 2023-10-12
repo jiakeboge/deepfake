@@ -105,7 +105,7 @@
                     <option value="model4">model 4</option>
                 </select>
     
-                <input type="button" id="inference" value="Inference" />
+                <input type="button" id="inference" value="Inference" onclick="startInference()">
             </div>
         </form>
     </div>
@@ -331,6 +331,38 @@ function set_interval(){
 }
 
 var expanded = false;
+
+
+// Websocket
+var socket = new WebSocket("ws://" + window.location.host + "/ws");
+
+// Connection is open
+socket.onopen = (event) => {
+// Send a message to start training
+    console.log("Websocket connect to", "ws://" + window.location.host + "/ws");
+};
+
+// Listen for messages
+socket.onmessage = (event) => {
+    const wsData = JSON.parse(event.data);
+    console.log(wsData.message);
+    if (wsData.message == "Inference completed"){
+        data = wsData.result;
+    }
+};
+
+// Connection is closed
+socket.onclose = (event) => {
+    console.error('Training socket closed');
+};
+
+function startInference(){
+    socket.send(JSON.stringify({
+        'message': 'start_inference',
+        'path': video.src,
+        'trainingInfor':{'OpM':0, 'LR':0.01},
+    }));
+}
 
 $(function() {
     
