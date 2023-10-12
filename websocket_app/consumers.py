@@ -9,24 +9,19 @@ from AiServer.AiServerHandler import train_model
 from AiServer.AiServerHandler import inference_model
 
 train_json = {
-        # "basenet": 'vgg16_reducedfc.pth',
         "batch_size": 1,
         "epochs": 10,
-        # "resume": None,
-        # "num_workers": 4
-        # "cuda": True,
         "lr": 0.001,
         "momentum": 0.9,
-        # "weight_decay": 5e-4,
-        # "gamma": 0.1,
-        # "multigpu": True,
+        "optim": "adam",
+        "data_path": "data/widerface",
         "save_folder": 'checkpoint/test'
     }
 
 inferenceJson = {
     "input_path": "./Pyramidbox/test_custom_videos/",
     "interval": 10,
-    "output_path": "./AiServer/Pyramidbox/test_custom_videos_results",
+    "output_path": "tmp",
 }
 
 class TrainingConsumer(AsyncWebsocketConsumer):

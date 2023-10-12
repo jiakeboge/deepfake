@@ -93,8 +93,17 @@ def train(callback, args):
         pyramidbox.loc_layers.apply(pyramidbox.weights_init)
         pyramidbox.conf_layers.apply(pyramidbox.weights_init)
 
-    optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=args.momentum,
-                          weight_decay=cfg.WEIGHT_DECAY)
+    if args.optim == "sgd":
+        optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=args.momentum,
+                              weight_decay=cfg.WEIGHT_DECAY)
+    elif args.optim == "adam":
+        optimizer = optim.Adam(net.parameters(), lr=args.lr, weight_decay=cfg.WEIGHT_DECAY)
+    elif args.optim == "rmsprop":
+        optimizer = optim.RMSprop(net.parameters(), lr=args.lr, momentum=args.momentum,
+                              weight_decay=cfg.WEIGHT_DECAY)
+    else:
+        raise ValueError
+
     criterion1 = MultiBoxLoss(cfg, cfg.CUDA)
     criterion2 = MultiBoxLoss(cfg, cfg.CUDA, use_head_loss=True)
     callback('Loading wider dataset...')
