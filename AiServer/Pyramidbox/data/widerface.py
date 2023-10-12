@@ -9,6 +9,7 @@ from PIL import Image, ImageDraw
 import torch.utils.data as data
 import numpy as np
 import random
+import json
 from ..utils.augmentations import preprocess
 
 
@@ -23,25 +24,38 @@ class WIDERDetection(data.Dataset):
         self.labels = []
 
         with open(list_file) as f:
-            lines = f.readlines()
-
-        for line in lines:
-            line = line.strip().split()
-            num_faces = int(line[1])
+            face_dict = json.load(f)
+        img_dict = dict()
+        anno_dict = dict()
+        for img_item in face_dict['images']:
+            img_id = img_item['id']
+            img_name = img_item['file_name']
+            img_dict[img_id] = img_name
+        
+        for face_item in face_dict['annotations']:
+            img_name = img_dict[face_item['image_id']]
+            bbox = face_item['bbox']
+            if img_name not in anno_dict:
+                anno_dict[img_name] = list()
+            else:
+                anno_dict[img_name].append({'bbox':bbox, 'category': 1})
+        
+        for key, val in anno_dict.items():
+            num_faces = len(val)
             box = []
             label = []
-            for i in range(num_faces):
-                x = float(line[2 + 5 * i])
-                y = float(line[3 + 5 * i])
-                w = float(line[4 + 5 * i])
-                h = float(line[5 + 5 * i])
-                c = int(line[6 + 5 * i])
+            for item in val:
+                x = float(item['bbox'][0])
+                y = float(item['bbox'][1])
+                w = float(item['bbox'][2])
+                h = float(item['bbox'][3])
+                c = int(item['category'])
                 if w <= 0 or h <= 0:
                     continue
                 box.append([x, y, x + w, y + h])
                 label.append(c)
             if len(box) > 0:
-                self.fnames.append(line[0])
+                self.fnames.append(key)
                 self.boxes.append(box)
                 self.labels.append(label)
 

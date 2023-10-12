@@ -51,33 +51,33 @@ _C.VARIANCE = [0.1, 0.2]
 _C.NUM_CLASSES = 2
 _C.OVERLAP_THRESH = 0.35
 _C.NEG_POS_RATIOS = 3
-_C.BATCH_SIZE = 1
-_C.GAMMA = 0.1
-_C.WEIGHT_DECAY = 5e-4
+
 
 # detection config
 _C.NMS_THRESH = 0.3
 _C.TOP_K = 5000
 _C.KEEP_TOP_K = 750
 _C.CONF_THRESH = 0.05
-_C.BASENET = 'vgg16_reducedfc.pth'
-_C.RESUME = False
-_C.CUDA = True
-_C.MULTIGPU = True
-_C.NUM_WORKERS = 4
+
 
 # dataset config
-
 _C.HOME = './AiServer/Pyramidbox'
-_C.SAVE_FOLDER = _C.HOME + '/weights'
 
 # face config
 _C.FACE = EasyDict()
-_C.FACE.TRAIN_FILE = _C.HOME + '/data/face_train.txt'
-_C.FACE.VAL_FILE = _C.HOME + '/data/face_val.txt'
-_C.FACE.FDDB_DIR = _C.HOME + '/FDDB_evaluation'
-_C.FACE.WIDER_DIR = _C.HOME + '/wider_face'
+_C.FACE.TRAIN_FILE = './AiServer/Pyramidbox/data/face_train.json'
+_C.FACE.VAL_FILE = './AiServer/Pyramidbox/data/face_val.json'
+_C.FACE.FDDB_DIR = './AiServer/Pyramidbox/FDDB_evaluation'
+_C.FACE.WIDER_DIR = './AiServer/Pyramidbox/wider_face'
 _C.FACE.AFW_DIR = '/data/faceDet/AFW'
 _C.FACE.PASCAL_DIR = '/data/faceDet/PASCAL_FACE'
 _C.FACE.OVERLAP_THRESH = 0.35
+
+_C.BATCH_SIZE = 1
+_C.CUDA = True
+_C.NUM_WORKER = 4
+_C.SAVE_FOLDER = "tmp"
+_C.RESUME = None
+_C.MULTIGPU = False
+_C.WEIGHT_DECAY = 5e-4
 
