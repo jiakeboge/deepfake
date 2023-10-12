@@ -4,5 +4,5 @@ media/
 Django_remarks
 export/
 *__pycache__*
-.*.pth
+*.pth
 checkpoint/
