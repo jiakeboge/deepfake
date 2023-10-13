@@ -1,6 +1,6 @@
 # training/consumers.py
 import json
-import asyncio
+import os
 from channels.db import database_sync_to_async
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import AsyncWebsocketConsumer
@@ -42,7 +42,7 @@ class TrainingConsumer(AsyncWebsocketConsumer):
         if message == 'start_training':
             train_json["lr"] = text_data_json['trainingInfor']["LR"]
             train_json["optim"] = text_data_json['trainingInfor']["optim"]
-            train_json["save_folder"] = text_data_json['trainingInfor']["save_folder"]
+            train_json["save_folder"] = os.path.join("checkpoint", text_data_json['trainingInfor']["save_folder"])
             await self.start_training()
         elif message == 'start_inference':
             path = text_data_json['path']
