@@ -15,8 +15,8 @@ train_json = {
         "lr": 0.001,
         "momentum": 0.9,
         "optim": "rmsprop",
-        "data_path": "/media/sean/U391/no/Pyramidbox/wider_face/",
-        "save_folder": '/media/sean/U391/deepfake/checkpoint/test'
+        "data_path": "/media/hkuit164/638FF62A1FE9E82D/wider_face/",
+        "save_folder": 'checkpoint/test'
     }
 
 inferenceJson = {
@@ -42,6 +42,7 @@ class TrainingConsumer(AsyncWebsocketConsumer):
         if message == 'start_training':
             train_json["lr"] = text_data_json['trainingInfor']["LR"]
             train_json["optim"] = text_data_json['trainingInfor']["optim"]
+            train_json["save_folder"] = text_data_json['trainingInfor']["save_folder"]
             await self.start_training()
         elif message == 'start_inference':
             path = text_data_json['path']

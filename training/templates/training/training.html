@@ -124,7 +124,7 @@
         
         socket.send(JSON.stringify({
             'message': 'start_training',
-            'trainingInfor':{'LR':lr, "optim":optim, "save_folder":name, "data_path":selectedProjects },
+            'trainingInfor':{'LR':lr, "optim":optim, "save_folder": name, "data_path":selectedProjects },
         }));
     }
 
