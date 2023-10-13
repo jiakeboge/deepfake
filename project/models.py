@@ -9,3 +9,4 @@ class Project(models.Model):
     labelType = models.SmallIntegerField(verbose_name="Label Type", choices=labelType_choices, default=1)
     def __str__(self):
         return self.projecName
+    

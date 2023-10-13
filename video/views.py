@@ -4,6 +4,7 @@ from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 
 import json, os, shutil
+from lib.JsonCreator import JsonCreator
 import socket
 
 from .models import Video
@@ -104,6 +105,21 @@ def export_project(request,pk):
             f= open(os.path.join(path, videoName,str_frameName + ".txt"), "w+")
             for face_label in videoOject.data[frameName]:
                 f.write(str(face_label)+"\n")
+    return HttpResponseRedirect('/Project/Video/{}'.format(pk))
+
+def data_export(request,pk):
+    imageOjects = Video.objects.filter(project_id = pk)
+    JsonObj = JsonCreator("coco", imageOjects)
+    JsonData = JsonObj.OutputJson()
+    JsonObject = json.dumps(JsonData, indent=4)
+    path = os.path.join(os.getcwd(),'export')
+    project_path = os.path.join(path, "project_{}".format(pk))
+
+    os.makedirs(project_path, exist_ok=True)
+    # Writing to sample.json
+    with open(os.path.join(project_path,"result_project_{}.json".format(pk)), "w") as outfile:
+        outfile.write(JsonObject)
+
     return HttpResponseRedirect('/Project/Video/{}'.format(pk))
 
 def ModelTraining(request,pk):

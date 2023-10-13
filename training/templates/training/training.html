@@ -45,7 +45,7 @@
                 </div>
                 <div class="d-grid gap-2" style="height:10px"></div>
                 <div class="d-grid gap-2">
-                    <select multiple>
+                    <select id="project" multiple>
                         {% for object in project_object %}
                         <option value="{{object.projecName}}">{{object.projecName}}</option>
                         {%endfor%}
@@ -55,19 +55,19 @@
                 
                 <div class="d-grid gap-2" style="height:30px"></div>
                 <div style="height:400px">
-                    <select class="form-select select" aria-label="Default select example">
+                    <select id="optimization" class="form-select select" aria-label="Default select example">
                       <option value="" disabled selected>Optimization Methods</option>
-                      <option value="1">Adam</option>
-                      <option value="2">Two</option>
-                      <option value="3">Three</option>
+                      <option value="adam">adam</option>
+                      <option value="sgd">sgd</option>
+                      <option value="rmsprop">rmsprop</option>
                     </select>
                     <div class="d-grid gap-2" style="height:20px"></div>
                     <div class="input-group flex-nowrap">
-                      <input type="text" class="form-control" placeholder="Learning Rate" aria-label="Username" aria-describedby="addon-wrapping">
+                      <input id="learningRate" type="text" class="form-control" placeholder="Learning Rate: 0.0001~1" aria-label="Username" aria-describedby="addon-wrapping">
                     </div>
                     <div class="d-grid gap-2" style="height:20px"></div>
                     <div class="input-group flex-nowrap">
-                      <input type="text" class="form-control" placeholder="Model name saved as" aria-label="Username" aria-describedby="addon-wrapping">
+                      <input id="modelName" type="text" class="form-control" placeholder="Model name saved as" aria-label="Username" aria-describedby="addon-wrapping">
                     </div>
                 </div>
                 <div class="d-grid gap-2" style="height:-60px"></div>
@@ -92,6 +92,11 @@
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
 <script>
+    var chosenProject = document.getElementById("project");
+    var optimization = document.getElementById("optimization")
+    var learningRate = document.getElementById("learningRate");
+    var modelName = document.getElementById("modelName");
+
     function updateSpan(message) {
         const span = document.getElementById('span');
         const newMessage = document.createElement('div');
@@ -100,10 +105,26 @@
     }
 
     function startTraining(){
-        console.log("okasdasasdasdasadasdasdsa")
+        var selectedProjects = chosenProject.value;
+        var optim = optimization.value;
+        var name = modelName.value;
+        var lr = parseFloat(learningRate.value); // Assuming `learningRate` is the input element
+
+        // Check if the value is less than 0.0001
+        if (lr < 0.0001) {
+          lr = 0.0001; // Set it to the minimum value
+        }
+        
+        // Check if the value is greater than 1
+        if (lr > 1) {
+          lr = 1; // Set it to the maximum value
+        }
+
+        console.log("asda")
+        
         socket.send(JSON.stringify({
             'message': 'start_training',
-            'trainingInfor':{'OpM':0, 'LR':0.01},
+            'trainingInfor':{'LR':lr, "optim":optim, "save_folder":name, "data_path":selectedProjects },
         }));
     }
 

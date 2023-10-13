@@ -8,14 +8,15 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from AiServer.AiServerHandler import train_model
 from AiServer.AiServerHandler import inference_model
 
+
 train_json = {
         "batch_size": 1,
         "epochs": 10,
         "lr": 0.001,
         "momentum": 0.9,
-        "optim": "adam",
-        "data_path": "/media/hkuit164/638FF62A1FE9E82D/wider_face/",
-        "save_folder": 'checkpoint/test'
+        "optim": "rmsprop",
+        "data_path": "/media/sean/U391/no/Pyramidbox/wider_face/",
+        "save_folder": '/media/sean/U391/deepfake/checkpoint/test'
     }
 
 inferenceJson = {
@@ -39,6 +40,8 @@ class TrainingConsumer(AsyncWebsocketConsumer):
 
         # Start the training task
         if message == 'start_training':
+            train_json["lr"] = text_data_json['trainingInfor']["LR"]
+            train_json["optim"] = text_data_json['trainingInfor']["optim"]
             await self.start_training()
         elif message == 'start_inference':
             path = text_data_json['path']
@@ -53,7 +56,7 @@ class TrainingConsumer(AsyncWebsocketConsumer):
         return train_model(self.send_training_update, train_json)
 
     @database_sync_to_async
-    def _inference_model_async(self ):
+    def _inference_model_async(self):
         return inference_model(self.send_training_update, inferenceJson)
     
     def send_training_update(self, message):

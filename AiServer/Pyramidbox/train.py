@@ -48,8 +48,8 @@ def train(callback, args):
     else:
         torch.set_default_tensor_type('torch.FloatTensor')
 
-    if not os.path.exists(cfg.SAVE_FOLDER):
-        os.makedirs(cfg.SAVE_FOLDER)
+    if not os.path.exists(args.save_folder):
+        os.makedirs(args.save_folder)
 
     train_dataset = WIDERDetection(cfg.FACE.TRAIN_FILE, mode='train', folder_path=args.data_path)
 
