@@ -66,6 +66,7 @@
                       <input id="learningRate" type="text" class="form-control" placeholder="Learning Rate: 0.0001~1" aria-label="Username" aria-describedby="addon-wrapping">
                     </div>
                     <div class="d-grid gap-2" style="height:20px"></div>
+
                     <div class="input-group flex-nowrap">
                       <input id="modelName" type="text" class="form-control" placeholder="Model name saved as" aria-label="Username" aria-describedby="addon-wrapping">
                     </div>
@@ -125,6 +126,15 @@
         socket.send(JSON.stringify({
             'message': 'start_training',
             'trainingInfor':{'LR':lr, "optim":optim, "save_folder": name, "data_path":selectedProjects },
+        }));
+    }
+
+    function stopTraining(){
+        console.log("now stop training")
+
+        socket.send(JSON.stringify({
+            'message': 'stop_training',
+            'trainingInfor':{'args': 'nothing' },
         }));
     }
 

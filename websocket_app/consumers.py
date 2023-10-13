@@ -7,6 +7,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 
 from AiServer.AiServerHandler import train_model
 from AiServer.AiServerHandler import inference_model
+from AiServer.AiServerHandler import stop_training
 
 
 train_json = {
@@ -35,6 +36,7 @@ class TrainingConsumer(AsyncWebsocketConsumer):
         pass
 
     async def receive(self, text_data):
+        print("dasjkhdashduasud")
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
         self.trainingInfor = text_data_json['trainingInfor']
@@ -50,6 +52,8 @@ class TrainingConsumer(AsyncWebsocketConsumer):
             path = path.replace('http://127.0.0.1:8000/', "")
             inferenceJson["input_path"] = path
             await self.startInference()
+        elif message == "stop_training":
+            await self.stopTraining()
 
 
     @database_sync_to_async
@@ -60,6 +64,10 @@ class TrainingConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def _inference_model_async(self):
         return inference_model(self.send_training_update, inferenceJson)
+
+    @database_sync_to_async
+    def _stop_training_async(self):
+        stop_training()
     
     def send_training_update(self, message):
         # This method will be called by the train_model function to send messages to the frontend
@@ -83,3 +91,12 @@ class TrainingConsumer(AsyncWebsocketConsumer):
         await self.send(json.dumps({'message': 'Inference completed',
                                     'result': jsonResult
                                     }))
+
+    async def stopTraining(self):
+        await self.send(json.dumps({'message': 'StopTraining'}))
+
+        await self._stop_training_async()
+
+        # await self.send(json.dumps({'message': 'Inference completed',
+        #                             'result': jsonResult
+        #                             }))

@@ -1,6 +1,7 @@
 import time
 import AiServer.Pyramidbox.train as train
 import AiServer.Pyramidbox.fddb_test as test
+# import AiServer.Pyramidbox.train as train_stop
 
 
 def train_model(callback, json):
@@ -8,9 +9,11 @@ def train_model(callback, json):
 
 
 def inference_model(callback, json):
-    # Pyramidbox.fddb_test.test(callback, json)
-
     return test.test_customize(callback, json)
+
+
+def stop_training():
+    train.train_stop()
 
 
 if __name__ == "__main__":

@@ -25,6 +25,12 @@ from .layers.modules import MultiBoxLoss
 from .data.widerface import WIDERDetection, detection_collate
 
 min_loss = np.inf
+stop = True
+
+
+def train_stop():
+    global stop
+    stop = True
 
 
 class Config:
@@ -33,7 +39,9 @@ class Config:
 
 
 def train(callback, args):
+    global stop
     args = Config(args)
+    stop = False
     # args.epoch
 
     if not cfg.MULTIGPU:
@@ -119,6 +127,9 @@ def train(callback, args):
     for epoch in range(start_epoch, args.epochs):
         losses = 0
         for batch_idx, (images, face_targets, head_targets) in enumerate(train_loader):
+            if stop:
+                callback("Training stops")
+                return
             if cfg.CUDA:
                 images = Variable(images.cuda())
                 images = images.cuda()
