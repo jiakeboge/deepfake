@@ -8,4 +8,5 @@ export/
 checkpoint/
 AiServer/Pyramidbox/test_custom_videos_results/
 tmp
+.DS_Store
 

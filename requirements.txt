@@ -1,0 +1,8 @@
+Django==3.2.14
+daphne
+channels
+opencv-python==4.6.0.66
+torch==1.6.0
+torchvision==0.7.0
+easydict
+numpy==1.21.6

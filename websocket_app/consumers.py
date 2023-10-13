@@ -17,13 +17,15 @@ train_json = {
         "momentum": 0.9,
         "optim": "rmsprop",
         "data_path": "/media/hkuit164/638FF62A1FE9E82D/wider_face/",
-        "save_folder": 'checkpoint/test'
+        "save_folder": 'checkpoint/test',
+        "use_cuda": False,
     }
 
 inferenceJson = {
     "model_path": "checkpoint/pyramidbox_-1.pth",
     # "input_path": "./Pyramidbox/test_custom_videos/",
     "interval": 10,
+    "use_cuda": False,
     # "output_path": "tmp",
 }
 

@@ -148,23 +148,24 @@ def test_customize(callback, args):
     args = Config(args)
     args.epoch = -1
     args.thresh = 0.01
-    args.use_cuda = True
     # args.model_path = 'checkpoint/pyramidbox_-1.pth'
     args.model = args.model_path #os.path.join(args.model_path, f'pyramidbox_{args.epoch}.pth')
     # args.save_path = os.path.join(args.output_path, f'pyramidbox_resnet152_{args.epoch}')
 
     args.save_path = args.input_path.replace("media", "export")
     if args.use_cuda:
+        device = "cuda:0"
         torch.set_default_tensor_type('torch.cuda.FloatTensor')
     else:
+        device = "cpu"
         torch.set_default_tensor_type('torch.FloatTensor')
 
     try:
         net = build_net('test', cfg.NUM_CLASSES, res=50)
-        net.load_state_dict(torch.load(args.model))
+        net.load_state_dict(torch.load(args.model, map_location=torch.device(device)))
     except RuntimeError:
         net = build_net('test', cfg.NUM_CLASSES, res=152)
-        net.load_state_dict(torch.load(args.model))
+        net.load_state_dict(torch.load(args.model, map_location=torch.device(device)))
 
     net.eval()
 
