@@ -149,17 +149,15 @@ def test_customize(callback, args):
     args.epoch = -1
     args.thresh = 0.01
     args.use_cuda = True
-    args.model_path = 'checkpoint/pyramidbox_-1.pth'
-    args.model = os.path.join(args.model_path, f'pyramidbox_{args.epoch}.pth')
-    args.save_path = os.path.join(args.output_path, f'pyramidbox_resnet152_{args.epoch}')
+    # args.model_path = 'checkpoint/pyramidbox_-1.pth'
+    args.model = args.model_path #os.path.join(args.model_path, f'pyramidbox_{args.epoch}.pth')
+    # args.save_path = os.path.join(args.output_path, f'pyramidbox_resnet152_{args.epoch}')
 
+    args.save_path = args.input_path.replace("media", "export")
     if args.use_cuda:
         torch.set_default_tensor_type('torch.cuda.FloatTensor')
     else:
         torch.set_default_tensor_type('torch.FloatTensor')
-
-    if not os.path.exists(args.save_path):
-        os.makedirs(args.save_path)
 
     try:
         net = build_net('test', cfg.NUM_CLASSES, res=50)

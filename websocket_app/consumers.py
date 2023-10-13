@@ -20,9 +20,10 @@ train_json = {
     }
 
 inferenceJson = {
-    "input_path": "./Pyramidbox/test_custom_videos/",
+    "model_path": "checkpoint/pyramidbox_-1.pth",
+    # "input_path": "./Pyramidbox/test_custom_videos/",
     "interval": 10,
-    "output_path": "tmp",
+    # "output_path": "tmp",
 }
 
 
