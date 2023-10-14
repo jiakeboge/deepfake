@@ -42,6 +42,7 @@ def train(callback, args):
     global stop
     args = Config(args)
     stop = False
+    cfg.CUDA = False
     # args.epoch
 
     if not cfg.MULTIGPU:
@@ -56,16 +57,23 @@ def train(callback, args):
     else:
         torch.set_default_tensor_type('torch.FloatTensor')
 
-    if not os.path.exists(args.save_folder):
-        os.makedirs(args.save_folder)
-
-    train_dataset = WIDERDetection(cfg.FACE.TRAIN_FILE, mode='train', folder_path=args.data_path)
+    train_json = os.path.join(args.data_path, "face_train.json")
+    val_path = os.path.join(args.data_path, "face_val.json")
+    train_dataset = WIDERDetection(train_json, mode='train', folder_path=args.data_path)
 
     train_loader = data.DataLoader(train_dataset, cfg.BATCH_SIZE,
                                    num_workers=0,#cfg.NUM_WORKERS,
                                    shuffle=True,
                                    collate_fn=detection_collate,
                                    pin_memory=True)
+
+    val_dataset = WIDERDetection(val_path, mode='val', folder_path=args.data_path)
+    val_batchsize = args.batch_size
+    val_loader = data.DataLoader(val_dataset, val_batchsize,
+                                 num_workers=0,
+                                 shuffle=False,
+                                 collate_fn=detection_collate,
+                                 pin_memory=True)
 
     iteration = 0
     start_epoch = 0
@@ -162,6 +170,7 @@ def train(callback, args):
             face_loss = (face_loss_l + face_loss_c).data.item()
             head_loss = (head_loss_l + head_loss_c).data.item()
 
+
             if iteration % 10 == 0:
                 loss_ = losses / (batch_idx + 1)
                 callback('Timer: {:.4f} sec.'.format(t1 - t0))
@@ -172,34 +181,30 @@ def train(callback, args):
 
             if iteration != 0 and iteration % 5000 == 0:
                 callback('Saving state, iter:', iteration)
-                file = 'pyramidbox_' + repr(iteration) + '.pth'
+                file = 'model.pth'
+                os.makedirs(args.save_folder, exist_ok=True)
                 torch.save(pyramidbox.state_dict(),
-                           os.path.join(cfg.SAVE_FOLDER, file))
+                           os.path.join(args.save_folder, file))
             iteration += 1
 
-        val(epoch, net, pyramidbox, criterion1, criterion2, callback, args)
+        val(epoch, net, val_loader, pyramidbox, criterion1, criterion2, callback, args)
 
 
 def val(epoch,
         net,
+        dataloader,
         pyramidbox,
         criterion1,
         criterion2,
         callback,
         args):
-    val_dataset = WIDERDetection(cfg.FACE.VAL_FILE, mode='val')
-    val_batchsize = args.batch_size // 2
-    val_loader = data.DataLoader(val_dataset, val_batchsize,
-                                 num_workers=cfg.NUM_WORKERS,
-                                 shuffle=False,
-                                 collate_fn=detection_collate,
-                                 pin_memory=True)
+
     net.eval()
     face_losses = 0
     head_losses = 0
     step = 0
     t1 = time.time()
-    for batch_idx, (images, face_targets, head_targets) in enumerate(val_loader):
+    for batch_idx, (images, face_targets, head_targets) in enumerate(dataloader):
         if args.cuda:
             images = Variable(images.cuda())
             face_targets = [Variable(ann.cuda(), volatile=True)

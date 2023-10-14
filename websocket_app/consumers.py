@@ -16,7 +16,7 @@ train_json = {
         "lr": 0.001,
         "momentum": 0.9,
         "optim": "rmsprop",
-        "data_path": "/media/hkuit164/638FF62A1FE9E82D/wider_face/",
+        "data_path": "dataset/wider_face/",
         "save_folder": 'checkpoint/test',
         "use_cuda": False,
     }
