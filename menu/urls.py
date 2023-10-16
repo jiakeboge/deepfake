@@ -6,7 +6,7 @@ app_name = 'menu'
 urlpatterns = [
     path('', views.home, name='menu_home'),
     path('Project/', include('project.urls')),
-    #path('Segmentation/', include('segmentation.urls')),
+    path('Classification/', include('classification.urls')),
     #path('Polygon/', include('polygon.urls')),
 
     # No longer needed.

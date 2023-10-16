@@ -89,7 +89,7 @@ class TrainingConsumer(AsyncWebsocketConsumer):
         await self.send(json.dumps({'message': 'StartInference'}))
 
         jsonResult = await self._inference_model_async()
-
+        
         await self.send(json.dumps({'message': 'Inference completed',
                                     'result': jsonResult
                                     }))

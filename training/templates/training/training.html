@@ -53,17 +53,17 @@
                 </div>
                 <div> (Press CTRL to select multiple projects for training)</div>
                 
-                <div class="d-grid gap-2" style="height:30px"></div>
+                <div class="d-grid gap-2" style="height:10px"></div>
+                <div> Optimization Methods </div>
                 <div style="height:400px">
                     <select id="optimization" class="form-select select" aria-label="Default select example">
-                      <option value="" disabled selected>Optimization Methods</option>
                       <option value="adam">adam</option>
-                      <option value="sgd">sgd</option>
+                      <option value="sgd" selected>sgd</option>
                       <option value="rmsprop">rmsprop</option>
                     </select>
                     <div class="d-grid gap-2" style="height:20px"></div>
                     <div class="input-group flex-nowrap">
-                      <input id="learningRate" type="text" class="form-control" placeholder="Learning Rate: 0.0001~1" aria-label="Username" aria-describedby="addon-wrapping">
+                      <input id="learningRate" type="text" class="form-control" placeholder="Learning Rate: 0.0001~1, default=0.01" aria-label="Username" aria-describedby="addon-wrapping">
                     </div>
                     <div class="d-grid gap-2" style="height:20px"></div>
 
@@ -109,15 +109,19 @@
         var selectedProjects = chosenProject.value;
         var optim = optimization.value;
         var name = modelName.value;
+        if (name == ""){
+            name = selectedProjects
+        }
         var lr = parseFloat(learningRate.value); // Assuming `learningRate` is the input element
 
         // Check if the value is less than 0.0001
-        if (lr < 0.0001) {
+        if (lr == "") {
+            lr = 0.01;
+        }
+        elif (lr < 0.0001) {
           lr = 0.0001; // Set it to the minimum value
         }
-        
-        // Check if the value is greater than 1
-        if (lr > 1) {
+        elif (lr > 1) {
           lr = 1; // Set it to the maximum value
         }
 

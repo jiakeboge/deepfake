@@ -3,7 +3,7 @@ from django.forms import ModelForm
 from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 
-import json, os, shutil
+import json, os, shutil, glob, ast
 from lib.JsonCreator import JsonCreator
 import socket
 
@@ -11,6 +11,7 @@ from .models import Video
 from project.models import Project
 
 import cv2
+from PIL import Image
 import tempfile
 
 HOST = "127.0.0.1"  # The server's hostname or IP address
@@ -71,6 +72,7 @@ def ajax_submitdata(request):
     data = json.loads(request.POST.get('data'))
     Video.objects.filter(id = request.POST.get('id')).update(data = data)
     #Video.objects.filter(id = request.POST.get('id')).update(data = {} )
+    
     return HttpResponse("SUCCESS")
 
 def ajax_delete_item(request,pk):
@@ -107,20 +109,89 @@ def export_project(request,pk):
                 f.write(str(face_label)+"\n")
     return HttpResponseRedirect('/Project/Video/{}'.format(pk))
 
-def data_export(request,pk):
-    imageOjects = Video.objects.filter(project_id = pk)
-    JsonObj = JsonCreator("coco", imageOjects)
-    JsonData = JsonObj.OutputJson()
-    JsonObject = json.dumps(JsonData, indent=4)
+def convert_coco(request, pk):
+    
     path = os.path.join(os.getcwd(),'export')
-    project_path = os.path.join(path, "project_{}".format(pk))
-
-    os.makedirs(project_path, exist_ok=True)
-    # Writing to sample.json
-    with open(os.path.join(project_path,"result_project_{}.json".format(pk)), "w") as outfile:
-        outfile.write(JsonObject)
-
+    path = os.path.join(path, 'project_' + str(pk) + '/')
+    
+    JsonData = {}
+    JsonData["info"] = {}
+    JsonData["licenses"] = []
+    images=[]
+    annotations=[]
+    
+    image_index = -1
+    anno_index = 0
+    width = 720 # default
+    height = 1080
+    
+    for root, directories, dummy1 in os.walk(path):
+        for directory in directories:
+            
+            video_path = os.path.join(root, directory)
+            video_name = os.path.basename(video_path)
+            txt_name = root + directory + '/fold-out.txt'
+            # print(txt_name)
+            with open(txt_name, 'r') as file:
+                for line in file:
+                    if line.strip().endswith('.jpg'):
+                        file_name = video_name + '/' + line.strip()
+                        image = {}
+                        image["file_name"] = file_name
+                        image_index += 1
+                        if image_index == 0:
+                            frame = Image.open(os.path.join(root, file_name))
+                            width, height = frame.size
+                        image["id"] = image_index
+                        image["height"] = height
+                        image["width"] = width
+                        images.append(image)
+                    
+                    elif line.strip().isdigit():
+                        continue
+                    else:
+                        # annotation info
+                        box = line.split()
+                        annotation = {}
+                        annotation["bbox"] = [box[0], box[1], box[2], box[3]]
+                        keypoints=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,] # 3x17
+                        annotation["keypoints"] = keypoints
+                        annotation["image_id"] = image_index
+                        annotation["id"] = anno_index
+                        anno_index += 1
+                        annotation["area"] = int(box[2]) * int(box[3])
+                        annotation["category_id"] =  1
+                        annotation["iscrowd"] = 0
+                        annotation["num_keypoints"] = 0
+                        annotations.append(annotation)
+                    
+                    
+    JsonData["images"] = images
+    JsonData["annotations"] = annotations
+    Category = {"supercategory": "person",
+                    "id": 1,
+                    "name": "person",
+                    "keypoints": [
+                        "nose","left_eye","right_eye","left_ear","right_ear",
+                        "left_shoulder","right_shoulder","left_elbow","right_elbow",
+                        "left_wrist","right_wrist","left_hip","right_hip",
+                        "left_knee","right_knee","left_ankle","right_ankle"
+                    ],
+                    "skeleton": [
+                        [16,14],[14,12],[17,15],[15,13],[12,13],[6,12],[7,13],[6,7],
+                        [6,8],[7,9],[8,10],[9,11],[2,3],[1,2],[1,3],[2,4],[3,5],[4,6],[5,7]
+                    ]
+                }
+    JsonData["categories"] = Category
+    
+    with open(os.path.join(path,"result_project_{}.json".format(pk)), "w") as outfile:
+        outfile.write(json.dumps(JsonData, indent=4))
+    
+    
     return HttpResponseRedirect('/Project/Video/{}'.format(pk))
+
 
 def ModelTraining(request,pk):
     return render(request, 'training/training.html')

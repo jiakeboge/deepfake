@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'training.apps.TrainingConfig',
     'video.apps.VideoConfig',
     'project.apps.ProjectConfig',
+    'classification.apps.ClassificationConfig',
+    'image.apps.ImageConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

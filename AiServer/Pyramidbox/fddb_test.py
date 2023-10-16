@@ -51,7 +51,7 @@ def detect_face(net, img, thresh, use_cuda):
         while detections[0, i, j, 0] >= thresh:
             box = []
             score = detections[0, i, j, 0]
-            pt = (detections[0, i, j, 1:] * scale).cpu().numpy().astype(np.int)
+            pt = (detections[0, i, j, 1:] * scale).cpu().numpy().astype(int)
             j += 1
             box += [pt[0], pt[1], pt[2] - pt[0], pt[3] - pt[1], score]
             bboxes += [box]
@@ -182,7 +182,7 @@ def test_customize(callback, args):
     # video_path = os.path.join(root, video)
     video_path = args.input_path
     video_name = video_path.split("/")[-1]
-    frame_file_save_path = os.path.join(args.save_path, video_name)
+    frame_file_save_path = os.path.join(args.save_path)
     if not os.path.exists(frame_file_save_path):
         os.makedirs(frame_file_save_path)
 
@@ -210,11 +210,11 @@ def test_customize(callback, args):
                 x1, y1, w, h, score = bbox
                 f_boxes.append([x1/frame.shape[1], y1/frame.shape[0], w/frame.shape[1], h/frame.shape[0]])
                 fout.write('%d %d %d %d %lf\n' % (x1, y1, w, h, score))
-            for bbox in bboxes:
-                x1, y1, w, h, score = bbox
-                x1, y1, x2, y2 = int(x1), int(y1), int(x1 + w), int(y1 + h)
-                cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
-                cv2.imwrite(os.path.join(frame_file_save_path, str(save_frame_counter) + "_detected.jpg"), img)
+            #for bbox in bboxes:
+            #    x1, y1, w, h, score = bbox
+            #    x1, y1, x2, y2 = int(x1), int(y1), int(x1 + w), int(y1 + h)
+            #    cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            #    cv2.imwrite(os.path.join(frame_file_save_path, str(save_frame_counter) + "_detected.jpg"), img)
             result_dict["frame_{}".format(read_frame_counter)] = f_boxes
     print(result_dict)
     fout.close()
