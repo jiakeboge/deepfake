@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css_header %}
+   .my_padding {
+    padding: 10px;
+    }
+    .my_height{
+    height: 600px
+    }
+    <!--.content{position: absolute; top: 200px; left: 200px; clip: rect(0px, 640px, 300px, 0px); width:900px; height:600px;}-->
+    .canvas{ position:relative; width:950px; height:550px; }
+    .imageContainer{ position:absolute; width:100%; height:100%; }
+    .svgContainer{ position:absolute; width:100%; height:100%; }
+
+    .normal_Anno{fill:blue;stroke:red;stroke-width:3;fill-opacity:0.1;stroke-opacity:0.9}
+    .active_Anno{fill-opacity:0.5;}
+
+    .active_KeyButton{fill}
+
+    .normal_label_button{}
+
+    .ZINDEX{position: relative; z-index: 3;}
+{% endblock %}
+
+{% block data_button %}
+{% for data_object in data_objects %}
+<button class="list-group-item list-group-item-action" onclick="Highlight_data_item(this)" id="{{data_object.id}}">{{data_object.filename}}</button>
+{%endfor%}
+{% endblock %}
+
+{% block import_data_modal %}
+<!-- Modal Import Data -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Import Data</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <div class="container-fluid my_padding">{{ field.label }} : {{field}}</div>
+                    {%endfor%}
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Import Json -->
+<div class="modal fade" id="staticBackImportJson" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" >Import Json</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form method="post" enctype="multipart/form-data" action="UploadJson">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    <input name="Json" type="file">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Import</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block import_data %}
+<li class="nav-item">
+    <button type="button" class="btn btn-primary" id="btnAddData">
+        Import Data
+    </button>
+</li>
+{% endblock %}
+
+
+{% block media_container %}
+<div class="container-fluid">
+    <div class="container-fluid">
+        <div class="border border-primary canvas">
+            <img id="imageContainer" class="imageContainer">
+            <div id="myCanvas"class="border border-primary svgContainer">
+                <svg id="svgContainer">
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid ZINDEX">
+        <button id="SkipButton" class="btn btn-outline-success" type="submit">Skip</button>
+        <button id="InvisibleButton" class="btn btn-outline-success" type="submit">Invisible</button>
+        <button id="DeleteKeypointButton" class="btn btn-outline-danger">DeleteKeypoint</button>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block javascript_content %}
+<script src="{% static 'ShapeCreator/image/ShapeCreatorRect.js' %}"></script>
+<script type="text/javascript">
+
+// image document object
+let image = document.getElementById("imageContainer");
+var image_width, image_height, image_show_w, image_show_h;
+
+// document to add label button
+var annotation_label_container  = document.getElementById("label_container");
+
+
+// Document object
+var canvas = document.getElementById("myCanvas");
+var SkipButton = document.getElementById("SkipButton");
+var InvisibleButton = document.getElementById("InvisibleButton");
+var DeleteKeypointButton = document.getElementById("DeleteKeypointButton");
+
+var kStage = new Konva.Stage({
+    width: 950,
+    height: 550,
+    container: canvas,
+});
+var kLayer = new Konva.Layer();
+kStage.add(kLayer);
+Ktransformer = new Konva.Transformer({
+                                    rotateEnabled:false,
+                                    centeredScaling: false,
+                                    resizeEnabled: true,
+                                    keepRatio: false,
+                                    enabledAnchors: [
+                                      'top-left',
+                                      'top-right',
+                                      'bottom-left',
+                                      'bottom-right',
+                                    ],
+                                    ignoreStroke: true,
+                                    borderDash: [3, 3],
+                                });
+
+var VisObj = new VisualizatorRectImage("Rect", data, kStage, kLayer, annotation_label_container);
+var ListenerObj = new ListenerRectImage("Rect", data, kStage, kLayer, annotation_label_container, Ktransformer);
+var CreaAnnoObj = new CreaAnnoRectImage("Rect",  data, kStage, kLayer);
+var SaveObj = new SaveDataRectImage("Rect", data, kStage);
+var ShapeDeletorObj = new ShapeDeletorRectImage("Keypoint", data, kStage, kLayer,Ktransformer);
+
+//label data
+var data;
+
+$("#btnAddData").click(function () {
+    $('#staticBackdrop').modal('show');
+});
+
+$(btnExport).click(function (){
+    window.location.href = window.location.href + "export";
+})
+
+$(btnExport).click(function (){
+    window.location.href = window.location.href + "export";
+})
+
+$("#btnImportJson").click(function () {
+    $('#staticBackImportJson').modal('show');
+});
+
+$("#createAnno").attr('onClick', 'StartCreate()');
+
+$("#deleteAnno").attr('onClick', 'ShapeDeletorObj.DeleteShape()');
+$("#submitData").attr('onClick', 'submit_label()');
+
+document.addEventListener('annotation-end', function() {
+  ListenerObj.StartStageListener();
+  VisObj.ShowData();
+});
+
+function StartCreate(){
+    ListenerObj.StopStageListener();
+    CreaAnnoObj.StarCrea();
+}
+
+function Highlight_data_item(button) {
+   if(data){
+    SaveObj.SaveData();
+    submit_label();
+   }
+   $(".col-2 .active").removeClass("active");
+   $(button).addClass("active");
+   image.src = "/media/" + button.textContent;
+   $.ajax({
+            url: '/Image/ajax_getdata',
+            type: "get",
+            data: {
+                id: button.id
+            },
+            dataType: "JSON",
+            success: function (res) {
+                data = res.data;
+                image_width = res.image_info["width"];
+                image_height = res.image_info["height"];
+
+                if (data == null){
+                    data = {};
+                }
+                CreaAnnoObj.Data = data;
+                VisObj.Data = data;
+                SaveObj.Data = data;
+                ShapeDeletorObj.Data = data;
+                VisObj.ShowData();
+                ListenerObj.StartStageListener();
+            }
+        })
+}
+
+function submit_label(){
+    var token = "{{ csrf_token }}"
+    //data = {};
+    SaveObj.SaveData();
+    $.ajax({
+            url: '/Image/ajax_submitdata/',
+            type: "post",
+            headers: { 'X-CSRFTOKEN': `${token}` },
+            data: {
+                id: $(".col-2 .active")[0].id,
+                data: JSON.stringify(data)
+            },
+            dataType: "JSON",
+            success: function (res) {
+            }
+        })
+}
+
+</script>
+{% endblock %}
